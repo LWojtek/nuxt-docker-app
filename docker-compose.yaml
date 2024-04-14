@@ -1,16 +1,15 @@
 version: "3.6"
 
+volumes:
+    node_modules:
 services:
-    # nuxt? nazwa obrazu w dockere jest wtedy strefa-klienta-front-nuxt?
-    # Lepsze byloby strefa-klienta-front i tyle? Niewiem czy to mozliwe.
-    nuxt:
-        build: .
+    my-app-dev:
+        build:
+            context: .
+            dockerfile: ./Dockerfile
         ports:
             - "3000:3000"
+            - "24678:24678"
         volumes:
-            # Dlaczego .:/app dziala ?? Czy nie powinno odpowiadac sciezki z Dockerfile ?
-            # /usr/src/nuxt-app
-            # Jak zmienie przestaje dzialac.
-            - .:/app
-        command: npm run dev
-# Te rozwiazanie dziala apka sie odpala ale tak jak rozmawialismy brakuje hot-reload.
+            - .:/src
+            - node_modules:/src/node_modules
