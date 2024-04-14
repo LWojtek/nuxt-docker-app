@@ -1,19 +1,19 @@
 # Dockerfile
-FROM node:21-alpine
+FROM node:21-alpine as base
 
-# Czy ponizsze sciezki sa wporzadku? Gdzies widzialem ze daja po prostu /app/ ale wtedy mi nie dziala
-# Te nuxt app bym zmienil na strefa-klienta lub cos? Niewiem czy to ma znaczenie?
-RUN mkdir -p /usr/src/nuxt-app 
-WORKDIR /usr/src/nuxt-app 
+ENV NODE_ENV=development
 
-# Niewiem czy ten krok konieczny?
-RUN apk update && apk upgrade
-RUN apk add git
+WORKDIR /src
 
-COPY . /usr/src/nuxt-app/
+# Build
+FROM base as build
+
+COPY --link package.json package-lock.json .
 RUN npm install
-RUN npm run build
 
-EXPOSE 3000
+# Run
+FROM base
+
+COPY --from=build /src/node_modules /src/node_modules
 
 CMD [ "npm", "run", "dev" ]
